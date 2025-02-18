@@ -87,7 +87,7 @@ RELOAD ASYNCHRONOUS METRICS [ON CLUSTER cluster_name]
 
 ## DROP DNS CACHE
 
-Clears ClickHouse’s internal DNS cache. Sometimes (for old ClickHouse versions) it is necessary to use this command when changing the infrastructure (changing the IP address of another ClickHouse server or the server used by dictionaries).
+Clears ClickHouse's internal DNS cache. Sometimes (for old ClickHouse versions) it is necessary to use this command when changing the infrastructure (changing the IP address of another ClickHouse server or the server used by dictionaries).
 
 For more convenient (automatic) cache management, see disable_internal_dns_cache, dns_cache_max_entries, dns_cache_update_period parameters.
 
@@ -160,11 +160,17 @@ SYSTEM DROP FORMAT SCHEMA CACHE [FOR Protobuf]
 
 ## FLUSH LOGS
 
-Flushes buffered log messages to system tables, e.g. system.query_log. Mainly useful for debugging since most system tables have a default flush interval of 7.5 seconds.
+Flushes buffered log messages to system tables, e.g. system.query_log. Mainly useful for debugging since most system tables have a default flush interval of 7.5 seconds.
 This will also create system tables even if message queue is empty.
 
 ```sql
-SYSTEM FLUSH LOGS [ON CLUSTER cluster_name]
+SYSTEM FLUSH LOGS [ON CLUSTER cluster_name] [log_name|[database.table]] [, ...]
+```
+
+If you don't want to flush everything, you can flush one or more individual logs by passing either their name or their target table:
+
+```sql
+SYSTEM FLUSH LOGS query_log, system.query_views_log;
 ```
 
 ## RELOAD CONFIG
@@ -428,7 +434,7 @@ After running this statement the `[db.]replicated_merge_tree_family_table_name` 
 
 ### SYNC DATABASE REPLICA
 
-Waits until the specified [replicated database](https://clickhouse.com/docs/en/engines/database-engines/replicated) applies all schema changes from the DDL queue of that database.
+Waits until the specified [replicated database](/docs/en/engines/database-engines/replicated) applies all schema changes from the DDL queue of that database.
 
 **Syntax**
 ```sql
